@@ -32,6 +32,11 @@ class MSE(Objective):
 
 	def forward(self, pred, labels):
 		self.pred = pred
+		if labels.ndim == 1:
+			num_classes = pred.shape[1]
+			one_hot = np.zeros((labels.size, num_classes))
+			one_hot[np.arange(labels.size), labels] = 1
+			labels = one_hot
 		self.labels = labels
 		self.batch_size = pred.shape[0]
 
@@ -48,7 +53,11 @@ class CrossEntropy(Objective):
 		self.batch_size = None
 
 	def forward(self, logits, labels):
-
+		if labels.ndim == 1:
+			num_classes = logits.shape[1]
+			one_hot = np.zeros((labels.size, num_classes))
+			one_hot[np.arange(labels.size), labels] = 1
+			labels = one_hot
 		self.labels = labels
 		self.batch_size = logits.shape[0]
 
