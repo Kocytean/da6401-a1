@@ -23,7 +23,7 @@ class ReLU(Activation):
 		return self.output
 
 	def backward(self, grad):
-		return grad * (self.output > 0)
+		return grad * (self.output > 0)/50
 
 class Sigmoid(Activation):
 	def __init__(self):
