@@ -30,7 +30,6 @@ class NeuralNetwork:
 				assert len(hidden_sizes) == num_layers, "num_layers does not match hidden_sizes"
 		else:
 			num_layers = len(hidden_sizes)
-		input_size = args.input_size
 
 		for h in hidden_sizes:
 
