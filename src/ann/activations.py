@@ -15,14 +15,14 @@ class Activation(ABC):
 
 class ReLU(Activation):
 	def __init__(self):
-		self.input = None
+		self.output = None
 
 	def forward(self, x):
-		self.input = x
+		self.output = x
 		return np.maximum(0, x)
 
 	def backward(self, grad):
-		return grad * (self.input > 0)
+		return grad * (self.output > 0)
 
 class Sigmoid(Activation):
 	def __init__(self):
