@@ -2,8 +2,6 @@
 Data Loading and Preprocessing
 Handles MNIST and Fashion-MNIST datasets
 """
-import os
-os.environ["KERAS_BACKEND"] = "torch"
 from keras.datasets import mnist, fashion_mnist
 from sklearn.model_selection import train_test_split
 import numpy as np
