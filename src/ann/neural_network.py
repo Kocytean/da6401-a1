@@ -29,7 +29,7 @@ class NeuralNetwork:
 			if hidden_sizes:
 				assert len(hidden_sizes) == num_layers, "num_layers does not match hidden_sizes"
 		else:
-			num_layers = len(hidden_sizes)
+			num_layers = len(hidden_sizes)	
 
 		for h in hidden_sizes:
 
@@ -38,7 +38,7 @@ class NeuralNetwork:
 
 			input_size = h
 
-		self.layers.append(Dense(input_size, args.output_size, weight_init))
+		self.layers.append(Dense(input_size, output_size, weight_init))
 
 		self.loss = objective_fn(args.loss)
 		self.optimizer = optimizer(args.optimizer, args.learning_rate, args.weight_decay)
