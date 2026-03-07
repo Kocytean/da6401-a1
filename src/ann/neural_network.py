@@ -6,9 +6,7 @@ import sys
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-SRC_PATH = PROJECT_ROOT / "src"
 
-sys.path.insert(0, str(SRC_PATH))
 import numpy as np
 from ann.neural_layer import *
 from ann.activations import *
@@ -105,9 +103,6 @@ class NeuralNetwork:
 
 			grad_W_list.append(layer.dw)
 			grad_b_list.append(layer.db)
-
-		grad_W_list.reverse()
-		grad_b_list.reverse()
 
 		self.grad_W = np.empty(len(grad_W_list), dtype=object)
 		self.grad_b = np.empty(len(grad_b_list), dtype=object)
