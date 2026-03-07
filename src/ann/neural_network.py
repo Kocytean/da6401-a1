@@ -83,34 +83,32 @@ class NeuralNetwork:
 		grad_W_list = []
 		grad_b_list = []
 
+		# compute loss gradient
 		self.loss.forward(y_pred, y_true)
-
 		dL = self.loss.backward()
 
-		# output layer
+		# ----- output layer -----
 		dL = self.layers[-1].backward(dL)
+
 		grad_W_list.append(self.layers[-1].dw)
 		grad_b_list.append(self.layers[-1].db)
 
-		# hidden layers
-		for layer, activation in zip(
-				reversed(self.layers[:-1]),
-				reversed(self.activation_fns)):
+		# ----- hidden layers -----
+		for i in range(len(self.layers) - 2, -1, -1):
 
-			dL = activation.backward(dL)
-			dL = layer.backward(dL)
+			dL = self.activation_fns[i].backward(dL)
+			dL = self.layers[i].backward(dL)
 
-			grad_W_list.append(layer.dw)
-			grad_b_list.append(layer.db)
+			grad_W_list.append(self.layers[i].dw)
+			grad_b_list.append(self.layers[i].db)
 
-		# self.grad_W = np.empty(len(grad_W_list), dtype=object)
-		# self.grad_b = np.empty(len(grad_b_list), dtype=object)
+		# create explicit object arrays to avoid numpy broadcasting
+		self.grad_W = np.empty(len(grad_W_list), dtype=object)
+		self.grad_b = np.empty(len(grad_b_list), dtype=object)
 
-		# for i,(gw,gb) in enumerate(zip(grad_W_list,grad_b_list)):
-		# 	self.grad_W[i] = gw
-		# 	self.grad_b[i] = gb
-		self.grad_W = grad_W_list
-		self.grad_b = grad_b_list
+		for i, (gw, gb) in enumerate(zip(grad_W_list, grad_b_list)):
+			self.grad_W[i] = gw
+			self.grad_b[i] = gb
 
 		return self.grad_W, self.grad_b
 
