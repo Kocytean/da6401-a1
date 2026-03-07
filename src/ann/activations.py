@@ -13,45 +13,56 @@ class Activation(ABC):
 	def backward(self, grad):
 		pass
 
+import numpy as np
+
 class ReLU(Activation):
 
-	def __init__(self):
-		self.output = None
+    def __init__(self):
+        self.mask = None
 
-	def forward(self, x):
-		self.output = np.maximum(0, x)
-		return self.output
+    def forward(self, x):
+        self.mask = x > 0
+        return np.maximum(0, x)
 
-	def backward(self, grad):
-		return grad * (self.output > 0)
+    def backward(self, grad):
+        return grad * self.mask
+
 
 class Sigmoid(Activation):
-	def __init__(self):
-		self.output = None 
 
-	def forward(self, x):
-		self.output = 1 / (1 + np.exp(-x))
-		return self.output
+    def __init__(self):
+        self.out = None
 
-	def backward(self, grad):
-		return grad*self.output* (1 - self.output)
+    def forward(self, x):
+        self.out = 1 / (1 + np.exp(-x))
+        return self.out
+
+    def backward(self, grad):
+        return grad * self.out * (1 - self.out)
+
 
 class Tanh(Activation):
-	def __init__(self):
-		self.output = None
-	def forward(self, x):
-		self.output = np.tanh(x)
-		return self.output
-	def backward(self, grad):
-		return grad * (1 - self.output*self.output)
 
-def activation_fn(name: str):
-	n = name.lower()
+    def __init__(self):
+        self.out = None
 
-	if n == "relu":
-		return ReLU()
-	elif n == "sigmoid":
-		return Sigmoid()
-	elif n == "tanh":
-		return Tanh()
-	raise ValueError(f"Unknown activation function: {name}")
+    def forward(self, x):
+        self.out = np.tanh(x)
+        return self.out
+
+    def backward(self, grad):
+        return grad * (1 - self.out**2)
+
+
+def activation_fn(name):
+
+    n = name.lower()
+
+    if n == "relu":
+        return ReLU()
+    elif n == "sigmoid":
+        return Sigmoid()
+    elif n == "tanh":
+        return Tanh()
+
+    raise ValueError(f"Unknown activation {name}")
