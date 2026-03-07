@@ -6,7 +6,9 @@ Handles weight initialization, forward pass, and gradient computation
 import numpy as np
 
 def xavier_initializer(input_size, output_size):
-	return np.random.randn(input_size, output_size) * np.sqrt(2 / (input_size + output_size)), np.zeros((1, output_size))
+	W = np.random.randn(input_size, output_size) * np.sqrt(1.0 / input_size)
+	b = np.zeros((1, output_size))
+	return W, b
 
 def zero_initializer(input_size, output_size):
 	return np.zeros((input_size, output_size)), np.zeros((1, output_size))
@@ -30,9 +32,9 @@ class Dense:
 		return output
 
 	def backward(self, grad):
-		batch_size = self.input.shape[0]
-		self.dw = (self.input.T @ grad)/ batch_size
-		self.db = np.sum(grad, axis=0, keepdims=True)/ batch_size
+		# batch_size = self.input.shape[0]
+		self.dw = (self.input.T @ grad)
+		self.db = np.sum(grad, axis=0, keepdims=True)
 		return grad @ self.W.T
 
 	def get_params(self):
