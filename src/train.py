@@ -112,7 +112,7 @@ def main():
 
 	test_metrics = model.evaluate(X_test, y_test, return_logits=False)
 
-	print("Test:", test_metrics)
+	# print("Test:", test_metrics)
 
 	wandb.log({
 		# "test_accuracy": test_metrics["accuracy"],

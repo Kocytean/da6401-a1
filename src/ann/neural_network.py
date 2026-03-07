@@ -2,6 +2,13 @@
 Main Neural Network Model class
 Handles forward and backward propagation loops
 """
+import sys
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+SRC_PATH = PROJECT_ROOT / "src"
+
+sys.path.insert(0, str(SRC_PATH))
 import numpy as np
 from ann.neural_layer import *
 from ann.activations import *
@@ -74,45 +81,34 @@ class NeuralNetwork:
 		return self.layers[-1].forward(X), activations
 
 	def backward(self, y_true, y_pred):
-		"""
-		Backward propagation to compute gradients.
-		Returns two numpy arrays: grad_Ws, grad_bs.
-		- `grad_Ws[0]` is gradient for the last (output) layer weights,
-		  `grad_bs[0]` is gradient for the last layer biases, and so on.
-		"""
+
 		grad_W_list = []
 		grad_b_list = []
 
-		# Backprop through layers in reverse; collect grads so that index 0 = last layer
-
-		self.loss.forward(y_pred, y_true)
 		dL = self.loss.backward()
 
-
+		# output layer
 		dL = self.layers[-1].backward(dL)
 		grad_W_list.append(self.layers[-1].dw)
 		grad_b_list.append(self.layers[-1].db)
 
-
+		# hidden layers
 		for layer, activation in zip(
 			reversed(self.layers[:-1]),
 			reversed(self.activation_fns)
 		):
 			dL = activation.backward(dL)
 			dL = layer.backward(dL)
-
 			grad_W_list.append(layer.dw)
 			grad_b_list.append(layer.db)
-		# create explicit object arrays to avoid numpy trying to broadcast shapes
 
 		self.grad_W = np.empty(len(grad_W_list), dtype=object)
 		self.grad_b = np.empty(len(grad_b_list), dtype=object)
+
 		for i, (gw, gb) in enumerate(zip(grad_W_list, grad_b_list)):
 			self.grad_W[i] = gw
 			self.grad_b[i] = gb
 
-		# print("Shape of grad_Ws:", self.grad_W.shape, self.grad_W[1].shape)
-		# print("Shape of grad_bs:", self.grad_b.shape, self.grad_b[1].shape)
 		return self.grad_W, self.grad_b
 
 	def update_weights(self):
@@ -186,3 +182,56 @@ class NeuralNetwork:
 			if b_key in weight_dict:
 				layer.b = weight_dict[b_key].copy()
 
+def gradient_check(model, X, y, epsilon=1e-5):
+
+	# Forward pass
+	y_pred = model.forward(X)
+
+	# Backprop gradients
+	grad_W, grad_b = model.backward(y, y_pred)
+
+	print("Checking gradients...\n")
+
+	for l, layer in enumerate(model.layers):
+
+		W = layer.W
+		num_grad_W = np.zeros_like(W)
+
+		for i in range(W.shape[0]):
+			for j in range(W.shape[1]):
+
+				original = W[i, j]
+
+				# W + epsilon
+				W[i, j] = original + epsilon
+				loss_plus = model.loss.forward(model.forward(X), y)
+
+				# W - epsilon
+				W[i, j] = original - epsilon
+				loss_minus = model.loss.forward(model.forward(X), y)
+
+				# restore weight
+				W[i, j] = original
+
+				num_grad_W[i, j] = (loss_plus - loss_minus) / (2 * epsilon)
+
+		backprop_grad = grad_W[len(model.layers)-1-l]
+
+		diff = np.mean(np.abs(num_grad_W - backprop_grad))
+
+		print(f"Layer {l} weight gradient error:", diff)
+
+if __name__ == '__main__':
+	np.random.seed(0)
+
+	X = np.random.randn(5, 4)
+	y = np.zeros((5, 2))
+	y[np.arange(5), np.random.randint(0,2,5)] = 1
+
+	model = NeuralNetwork(
+		layers=[Dense(4,3), Dense(3,2)],
+		activation_fns=[ReLU()],
+		loss=CrossEntropy()
+	)
+
+	gradient_check(model, X, y)
