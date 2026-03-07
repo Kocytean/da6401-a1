@@ -38,7 +38,7 @@ class MSE(Objective):
 		return np.mean((pred - labels) ** 2)
 
 	def backward(self):
-		return 2 * (self.pred - self.labels)/ self.batch_size
+		return 2 * (self.pred - self.labels)/ (self.batch_size * self.labels.shape[1])
 
 class CrossEntropy(Objective):
 
@@ -58,7 +58,7 @@ class CrossEntropy(Objective):
 		return -np.sum(labels * np.log(self.probs + 1e-12))/self.batch_size
 
 	def backward(self):
-		return (self.probs - self.labels)/ self.batch_size
+		return (self.probs - self.labels)/ (self.batch_size * self.labels.shape[1])
 
 # METRIC FUNCTIONS for eval
 
