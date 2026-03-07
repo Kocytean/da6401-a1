@@ -24,7 +24,6 @@ class NeuralNetwork:
 		else:
 			output_size = 10
 
-		hidden_sizes = parse_hidden_sizes(args.hidden_size)
 		if args.num_layers is not None:
 			num_layers = args.num_layers
 			if hidden_sizes:
