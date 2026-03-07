@@ -84,6 +84,11 @@ class NeuralNetwork:
 
 		grad_W_list = []
 		grad_b_list = []
+
+		# ensure loss state exists
+		if getattr(self.loss, "labels", None) is None:
+			self.loss.forward(y_pred, y_true)
+
 		dL = self.loss.backward()
 
 		# output layer
@@ -98,6 +103,7 @@ class NeuralNetwork:
 		):
 			dL = activation.backward(dL)
 			dL = layer.backward(dL)
+
 			grad_W_list.append(layer.dw)
 			grad_b_list.append(layer.db)
 
