@@ -14,6 +14,7 @@ class Activation(ABC):
 		pass
 
 class ReLU(Activation):
+
 	def __init__(self):
 		self.output = None
 
