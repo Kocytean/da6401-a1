@@ -18,7 +18,7 @@ class NeuralNetwork:
 			sizes = []
 			for item in arg:
 				# split comma-separated values
-				parts = item.split(",")
+				parts = str(item).split(",")
 				for p in parts:
 					p = p.strip()
 					if p == "":
