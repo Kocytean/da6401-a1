@@ -30,7 +30,7 @@ class Dense:
 		return output
 
 	def backward(self, grad):
-
+		batch_size = self.input.shape[0]
 		self.dw = (self.input.T @ grad)/ batch_size
 		self.db = np.sum(grad, axis=0, keepdims=True)/ batch_size
 		return grad @ self.W.T
