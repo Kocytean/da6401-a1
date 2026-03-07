@@ -86,14 +86,16 @@ class NeuralNetwork:
 		# Backprop through layers in reverse; collect grads so that index 0 = last layer
 		self.loss.forward(y_pred, y_true)
 		dL = self.loss.backward()
-		dL = self.layers[-1].backward(dL)
-		grad_W_list.append(self.layers[-1].dw)
-		grad_b_list.append(self.layers[-1].db)
-		for i, layer in enumerate(self.layers[:-1][::-1]):
-			dL = self.activation_fns[i].backward(dL)
+
+		for i in reversed(range(len(self.layers))):
+
 			dL = self.layers[i].backward(dL)
-			grad_W_list.append(layer.dw)
-			grad_b_list.append(layer.db)
+
+			grad_W_list.append(self.layers[i].dw)
+			grad_b_list.append(self.layers[i].db)
+
+			if i > 0:  # activation before this layer
+				dL = self.activation_fns[i-1].backward(dL)
 		# create explicit object arrays to avoid numpy trying to broadcast shapes
 
 		self.grad_W = np.empty(len(grad_W_list), dtype=object)
