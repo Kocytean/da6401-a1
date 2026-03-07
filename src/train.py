@@ -57,7 +57,7 @@ def main():
 	args = parse_arguments()
 	if args.logging_options is None:
 		args.logging_options = ""
-	# wandb.init(project=args.wandb_project, config=vars(args))
+	wandb.init(project=args.wandb_project, config=vars(args))
 
 	(X_train, y_train, X_val, y_val, X_test, y_test) = load_data(args.dataset)
 
@@ -97,7 +97,7 @@ def main():
 		log_dict["val_recall"] = metrics["recall"]
 		log_dict["val_f1"] = metrics["f1"]
 
-		# wandb.log(log_dict)
+		wandb.log(log_dict)
 
 		print(f"Eval: Acc={metrics['accuracy']:.4f} | f1={metrics['f1']:.4f}")
 
@@ -114,14 +114,14 @@ def main():
 
 	print("Test:", test_metrics)
 
-	# wandb.log({
-	# 	"test_accuracy": test_metrics["accuracy"],
-	# 	"test_precision": test_metrics["precision"],
-	# 	"test_recall": test_metrics["recall"],
-	# 	"test_f1": test_metrics["f1"],
-	# })
+	wandb.log({
+		"test_accuracy": test_metrics["accuracy"],
+		"test_precision": test_metrics["precision"],
+		"test_recall": test_metrics["recall"],
+		"test_f1": test_metrics["f1"],
+	})
 
-	# wandb.finish()
+	wandb.finish()
 	print("Training complete!")
 
 if __name__ == '__main__':
