@@ -1,0 +1,6 @@
+/wandb
+/src/wandb
+/src/ann/__pycache__
+/src/utils/__pycache__
+/notebooks/.ipynb_checpoints
+/notebook/wandb

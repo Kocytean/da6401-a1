@@ -1,0 +1,38 @@
+program: src/train.py
+
+method: grid
+
+metric:
+  name: val_f1
+  goal: maximize
+
+parameters:
+
+  activation: 
+    value: "relu"
+
+  batch_size:
+    value: 32
+
+  epochs:
+    value: 20
+
+  optimizer:
+    value: "rmsprop"
+
+  learning_rate:
+    value: 0.001
+
+  weight_init: 
+    value: "xavier"
+
+  hidden_size:
+    value: "128,128,128"
+
+  weight_decay:
+    value: 0.0001
+
+  loss:
+    values: ["mse", "ce"]
+  logging_options:
+    value: "3"
