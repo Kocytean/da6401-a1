@@ -25,6 +25,7 @@ class Dense:
 
 
 	def forward(self, x):
+		self.input = x
 		output = x @ self.W + self.b
 		return output
 
