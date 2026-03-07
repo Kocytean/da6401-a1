@@ -36,7 +36,10 @@ class NeuralNetwork:
 			input_size = cli_args.input_size
 		else:
 			input_size = 784
-		output_size = cli_args.output_size
+		if hasattr(cli_args, "output_size"):
+			output_size = cli_args.output_size
+		else:
+			output_size = 10
 
 		hidden_sizes = parse_hidden_sizes(cli_args.hidden_size)
 		if cli_args.num_layers is not None:
