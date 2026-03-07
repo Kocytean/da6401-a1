@@ -1,6 +1,6 @@
 program: src/train.py
 
-method: bayes
+method: grid
 
 metric:
   name: val_f1
@@ -9,7 +9,7 @@ metric:
 parameters:
 
   activation: 
-    value: "relu"
+    value: "tanh"
 
   batch_size:
     value: 32

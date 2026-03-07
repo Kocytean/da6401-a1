@@ -85,7 +85,6 @@ class NeuralNetwork:
 		grad_W_list = []
 		grad_b_list = []
 
-		# ensure loss state exists
 		if getattr(self.loss, "labels", None) is None:
 			self.loss.forward(y_pred, y_true)
 
@@ -97,24 +96,20 @@ class NeuralNetwork:
 		grad_b_list.append(self.layers[-1].db)
 
 		# hidden layers
-		for layer, activation in zip(
-			reversed(self.layers[:-1]),
-			reversed(self.activation_fns)
-		):
-			dL = activation.backward(dL)
-			dL = layer.backward(dL)
+		for i in range(len(self.layers)-2, -1, -1):
 
-			grad_W_list.append(layer.dw)
-			grad_b_list.append(layer.db)
-		
-		L = len(grad_W_list)
+			dL = self.activation_fns[i].backward(dL)
+			dL = self.layers[i].backward(dL)
 
-		self.grad_W = np.empty(L, dtype=object)
-		self.grad_b = np.empty(L, dtype=object)
+			grad_W_list.append(self.layers[i].dw)
+			grad_b_list.append(self.layers[i].db)
 
-		for i in range(L):
-			self.grad_W[i] = grad_W_list[L - 1 - i]
-			self.grad_b[i] = grad_b_list[L - 1 - i]
+		self.grad_W = np.empty(len(grad_W_list), dtype=object)
+		self.grad_b = np.empty(len(grad_b_list), dtype=object)
+
+		for i,(gw,gb) in enumerate(zip(grad_W_list,grad_b_list)):
+			self.grad_W[i] = gw
+			self.grad_b[i] = gb
 
 		return self.grad_W, self.grad_b
 

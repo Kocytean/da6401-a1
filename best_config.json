@@ -1,19 +1,19 @@
 {
     "dataset": "mnist",
-    "epochs": 10,
+    "epochs": 50,
     "batch_size": 32,
     "loss": "cross_entropy",
     "optimizer": "rmsprop",
-    "learning_rate": 0.00106857883446755,
+    "learning_rate": 0.001,
     "weight_decay": 0.0001,
     "num_layers": null,
     "hidden_size": [
-        "256,128"
+        "128,128,128"
     ],
     "activation": "tanh",
-    "weight_init": "xavier",
+    "weight_init": "zero",
     "wandb_project": "da6401",
-    "logging_options": "",
+    "logging_options": "9",
     "input_size": 784,
     "output_size": 10
 }
