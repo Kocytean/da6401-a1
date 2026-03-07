@@ -32,7 +32,10 @@ class NeuralNetwork:
 			return sizes
 		self.activation_fns = []
 		self.layers = []
-		input_size = cli_args.input_size
+		if hasattr(cli_args, "input_size"):
+			input_size = cli_args.input_size
+		else:
+			input_size = 728
 		output_size = cli_args.output_size
 
 		hidden_sizes = parse_hidden_sizes(cli_args.hidden_size)
