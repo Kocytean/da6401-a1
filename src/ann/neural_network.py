@@ -88,13 +88,11 @@ class NeuralNetwork:
 		grad_W_list = []
 		grad_b_list = []
 
-		# compute loss gradient
 		self.loss.forward(y_pred, y_true)
 		dL = self.loss.backward()
 
 		# output layer
 		dL = self.layers[-1].backward(dL)
-
 		grad_W_list.append(self.layers[-1].dw)
 		grad_b_list.append(self.layers[-1].db)
 
