@@ -84,7 +84,8 @@ class NeuralNetwork:
 
 		grad_W_list = []
 		grad_b_list = []
-
+		if getattr(self.loss, "labels", None) is None:
+			self.loss.forward(y_pred, y_true)
 		dL = self.loss.backward()
 
 		# output layer
