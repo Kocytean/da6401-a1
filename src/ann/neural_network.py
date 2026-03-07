@@ -84,6 +84,8 @@ class NeuralNetwork:
 		grad_b_list = []
 
 		# Backprop through layers in reverse; collect grads so that index 0 = last layer
+		if self.loss.labels is None:
+			self.loss.forward(y_pred, y_true)
 		dL = self.loss.backward()
 		dL = self.layers[-1].backward(dL)
 		grad_W_list.append(self.layers[-1].dw)
@@ -138,7 +140,7 @@ class NeuralNetwork:
 
 		preds = np.argmax(logits, axis=1)
 		labels = np.argmax(y, axis=1)
-		# acc = accuracy_score(labels, preds)
+		# acc = accuracy_	score(labels, preds)
 		# precision = precision_score(labels, preds)
 		# recall = recall_score(labels, preds)
 		f1 = f1_score(labels, preds)
