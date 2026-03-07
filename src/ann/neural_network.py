@@ -106,14 +106,15 @@ class NeuralNetwork:
 
 			grad_W_list.append(layer.dw)
 			grad_b_list.append(layer.db)
-		grad_W_list.reverse()
-		grad_b_list.reverse()
-		self.grad_W = np.empty(len(grad_W_list), dtype=object)
-		self.grad_b = np.empty(len(grad_b_list), dtype=object)
+		
+		L = len(grad_W_list)
 
-		for i, (gw, gb) in enumerate(zip(grad_W_list, grad_b_list)):
-			self.grad_W[i] = gw
-			self.grad_b[i] = gb
+		self.grad_W = np.empty(L, dtype=object)
+		self.grad_b = np.empty(L, dtype=object)
+
+		for i in range(L):
+			self.grad_W[i] = grad_W_list[L - 1 - i]
+			self.grad_b[i] = grad_b_list[L - 1 - i]
 
 		return self.grad_W, self.grad_b
 
