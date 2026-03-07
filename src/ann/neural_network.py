@@ -139,7 +139,6 @@ class NeuralNetwork:
 
 		preds = np.argmax(logits, axis=1)
 		labels = np.argmax(y, axis=1)
-
 		acc = accuracy_score(labels, preds)
 		precision = precision_score(labels, preds)
 		recall = recall_score(labels, preds)
@@ -152,9 +151,9 @@ class NeuralNetwork:
 			"f1": f1}
 
 		if loss_fn is not None:
-			if isinstance(list):
+			if isinstance(loss_fn, list):
 				for loss in loss_fn:
-					metrics[loss]=objective_fn(loss_fn).forward(logits, y)
+					metrics[loss]=objective_fn(loss).forward(logits, y)
 			else:
 				metrics["loss"]=objective_fn(loss_fn).forward(logits, y)
 		if return_logits:
