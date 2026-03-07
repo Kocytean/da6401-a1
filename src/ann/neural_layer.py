@@ -29,13 +29,18 @@ class Dense:
 		output = np.matmul(x, self.W) + self.b
 		return output
 
+	# def backward(self, grad):
+
+	# 	batch_size = self.input.shape[0]
+	# 	self.dw = np.matmul(self.input.T, grad) / batch_size
+	# 	self.db = np.sum(grad, axis=0, keepdims=True) / batch_size
+	# 	return np.matmul(grad, self.W.T)
 	def backward(self, grad):
 
-		batch_size = self.input.shape[0]
-		self.dw = np.matmul(self.input.T, grad) / batch_size
-		self.db = np.sum(grad, axis=0, keepdims=True) / batch_size
-		return np.matmul(grad, self.W.T)
-		
+		self.dw = self.input.T @ grad
+		self.db = np.sum(grad, axis=0, keepdims=True)
+
+		return grad @ self.W.T
 	def get_params(self):
 		return {"W": self.W, "b": self.b}
 
