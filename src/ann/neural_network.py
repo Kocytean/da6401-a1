@@ -70,9 +70,11 @@ class NeuralNetwork:
 	def forward(self, X):
 
 		for i, layer in enumerate(self.layers[:-1]):
-			X = self.activation_fns[i].forward(layer.forward(X))
+			X = layer.forward(X)
+			X = self.activation_fns[i].forward(X)
 
-		return self.layers[-1].forward(X)
+		logits = self.layers[-1].forward(X)
+		return logits
 
 	def forward_trace(self, X):
 		activations = []
