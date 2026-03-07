@@ -35,6 +35,7 @@ class NeuralNetwork:
 						raise ValueError("Hidden layer sizes must be positive.")
 					sizes.append(val)
 			return sizes
+			
 		self.activation_fns = []
 		self.layers = []
 		if hasattr(cli_args, "input_size"):
@@ -67,8 +68,10 @@ class NeuralNetwork:
 		self.optimizer = optimizer(cli_args.optimizer, cli_args.learning_rate, cli_args.weight_decay)
 	
 	def forward(self, X):
+
 		for i, layer in enumerate(self.layers[:-1]):
 			X = self.activation_fns[i].forward(layer.forward(X))
+
 		return self.layers[-1].forward(X)
 
 	def forward_trace(self, X):
@@ -87,13 +90,12 @@ class NeuralNetwork:
 		self.loss.forward(y_pred, y_true)
 		dL = self.loss.backward()
 
-		# ----- output layer -----
+		# output layer
 		dL = self.layers[-1].backward(dL)
-
 		grad_W_list.append(self.layers[-1].dw)
 		grad_b_list.append(self.layers[-1].db)
 
-		# ----- hidden layers -----
+		# hidden layers
 		for i in range(len(self.layers) - 2, -1, -1):
 
 			dL = self.activation_fns[i].backward(dL)
@@ -102,7 +104,7 @@ class NeuralNetwork:
 			grad_W_list.append(self.layers[i].dw)
 			grad_b_list.append(self.layers[i].db)
 
-		# create explicit object arrays to avoid numpy broadcasting
+		# convert to object arrays as required by spec
 		self.grad_W = np.empty(len(grad_W_list), dtype=object)
 		self.grad_b = np.empty(len(grad_b_list), dtype=object)
 

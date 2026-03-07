@@ -25,16 +25,15 @@ class Dense:
 
 
 	def forward(self, x):
-		self.input = x
-		output = np.matmul(x, self.W) + self.b
+		output = x @ self.W + self.b
 		return output
 
 	def backward(self, grad):
 
-		self.dw = self.input.T @ grad
-		self.db = np.sum(grad, axis=0, keepdims=True)
+		self.dw = (self.input.T @ grad)/ batch_size
+		self.db = np.sum(grad, axis=0, keepdims=True)/ batch_size
 		return grad @ self.W.T
-		
+
 	def get_params(self):
 		return {"W": self.W, "b": self.b}
 
