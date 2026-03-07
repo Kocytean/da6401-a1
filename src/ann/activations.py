@@ -18,8 +18,8 @@ class ReLU(Activation):
 		self.output = None
 
 	def forward(self, x):
-		self.output = x
-		return np.maximum(0, x)
+		self.output = np.maximum(0, x)
+		return self.output
 
 	def backward(self, grad):
 		return grad * (self.output > 0)
