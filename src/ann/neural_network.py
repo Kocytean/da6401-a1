@@ -84,7 +84,6 @@ class NeuralNetwork:
 		grad_b_list = []
 
 		# Backprop through layers in reverse; collect grads so that index 0 = last layer
-		self.loss.forward(y_pred, y_true)
 		dL = self.loss.backward()
 		dL = self.layers[-1].backward(dL)
 		grad_W_list.append(self.layers[-1].dw)
