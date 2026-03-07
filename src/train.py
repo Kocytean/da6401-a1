@@ -84,7 +84,7 @@ def main():
 			metrics = model.evaluate(X_train, y_train, return_logits=False)
 			log_dict["train_accuracy"] = metrics["accuracy"]
 		if '9' in args.logging_options: # support for task 9, log grads
-			dw = model.grad_W[-1]
+			dw = model.grad_W[1]
 			for neuron_id in range(5):
 				grad_val = np.mean(dw[neuron_id])
 				log_dict["weight_init"] = args.weight_init
@@ -109,17 +109,48 @@ def main():
 
 			with open("best_config.json", "w") as f:
 				json.dump(vars(args), f, indent=4)
+	if '8' in args.logging_options:
+		test_metrics = model.evaluate(X_test, y_test, return_logits=True)
+		logits = test_metrics["logits"]
 
-	test_metrics = model.evaluate(X_test, y_test, return_logits=False)
+		preds = np.argmax(logits, axis=1)
+		labels = np.argmax(y_test, axis=1)
 
-	# print("Test:", test_metrics)
+		num_classes = y_test.shape[1]
 
-	wandb.log({
+		cm = np.zeros((num_classes, num_classes), dtype=int)
+
+		for t, p in zip(labels, preds):
+			cm[t, p] += 1
+
+		fig, ax = plt.subplots(figsize=(8,6))
+
+		im = ax.imshow(cm)
+
+		ax.set_xlabel("Predicted")
+		ax.set_ylabel("True")
+		ax.set_title("Confusion Matrix")
+
+		ax.set_xticks(range(num_classes))
+		ax.set_yticks(range(num_classes))
+
+		for i in range(num_classes):
+			for j in range(num_classes):
+				ax.text(j, i, cm[i, j], ha="center", va="center")
+
+		wandb.log({"confusion_matrix": wandb.Image(fig),
+			# "test_accuracy": test_metrics["accuracy"],
+			# "test_precision": test_metrics["precision"],
+			# "test_recall": test_metrics["recall"],
+			"test_f1": test_metrics["f1"],})
+	else:
+		test_metrics = model.evaluate(X_test, y_test, return_logits=False)
+		wandb.log({
 		# "test_accuracy": test_metrics["accuracy"],
 		# "test_precision": test_metrics["precision"],
 		# "test_recall": test_metrics["recall"],
 		"test_f1": test_metrics["f1"],
-	})
+		})
 
 	wandb.finish()
 	print("Training complete!")
