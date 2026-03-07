@@ -63,15 +63,16 @@ class CrossEntropy(Objective):
 # METRIC FUNCTIONS for eval
 
 def class_stats(labels, pred, num_classes=None):
-	if num_classes is None:
-		num_classes = max(labels.max(), pred.max()) + 1
-	tp, fp, fn = np.zeros(num_classes), np.zeros(num_classes), np.zeros(num_classes)
 
-	for c in range(num_classes):
-		tp[c] = np.sum((pred == c) & (labels == c))
-		fp[c] = np.sum((pred == c) & (labels != c))
-		fn[c] = np.sum((pred != c) & (labels == c))
-	return tp, fp, fn
+    if num_classes is None:
+        num_classes = max(labels.max(), pred.max()) + 1
+    cm = np.zeros((num_classes, num_classes))
+    for t, p in zip(labels, pred):
+        cm[t, p] += 1
+    tp = np.diag(cm)
+    fp = np.sum(cm, axis=0) - tp
+    fn = np.sum(cm, axis=1) - tp
+    return tp, fp, fn
 
 def accuracy_score(labels, pred):
 	return np.mean(labels == pred)
