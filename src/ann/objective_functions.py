@@ -38,7 +38,7 @@ class MSE(Objective):
 		return np.mean((pred - labels) ** 2)
 
 	def backward(self):
-		return 2 * (self.pred - self.labels)
+		return 2 * (self.pred - self.labels)/ self.batch_size
 
 class CrossEntropy(Objective):
 
@@ -58,21 +58,21 @@ class CrossEntropy(Objective):
 		return -np.sum(labels * np.log(self.probs + 1e-12))/self.batch_size
 
 	def backward(self):
-		return (self.probs - self.labels)
+		return (self.probs - self.labels) / self.batch_size
 
 # METRIC FUNCTIONS for eval
 
 def class_stats(labels, pred, num_classes=None):
 
-    if num_classes is None:
-        num_classes = max(labels.max(), pred.max()) + 1
-    cm = np.zeros((num_classes, num_classes))
-    for t, p in zip(labels, pred):
-        cm[t, p] += 1
-    tp = np.diag(cm)
-    fp = np.sum(cm, axis=0) - tp
-    fn = np.sum(cm, axis=1) - tp
-    return tp, fp, fn
+	if num_classes is None:
+		num_classes = max(labels.max(), pred.max()) + 1
+	cm = np.zeros((num_classes, num_classes))
+	for t, p in zip(labels, pred):
+		cm[t, p] += 1
+	tp = np.diag(cm)
+	fp = np.sum(cm, axis=0) - tp
+	fn = np.sum(cm, axis=1) - tp
+	return tp, fp, fn
 
 def accuracy_score(labels, pred):
 	return np.mean(labels == pred)

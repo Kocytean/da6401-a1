@@ -84,14 +84,14 @@ class NeuralNetwork:
 		grad_b_list = []
 
 		# Backprop through layers in reverse; collect grads so that index 0 = last layer
-		if self.loss.labels is None:
-			self.loss.forward(y_pred, y_true)
+		self.loss.forward(y_pred, y_true)
 		dL = self.loss.backward()
 		dL = self.layers[-1].backward(dL)
 		grad_W_list.append(self.layers[-1].dw)
 		grad_b_list.append(self.layers[-1].db)
 		for i, layer in enumerate(self.layers[:-1][::-1]):
-			dL = layer.backward(self.activation_fns[-(i+1)].backward(dL))
+			dL = self.activation_fns[i].backward(dL)
+			dL = self.layers[i].backward(dL)
 			grad_W_list.append(layer.dw)
 			grad_b_list.append(layer.db)
 		# create explicit object arrays to avoid numpy trying to broadcast shapes
