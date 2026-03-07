@@ -96,15 +96,19 @@ class NeuralNetwork:
 		grad_b_list.append(self.layers[-1].db)
 
 		# hidden layers
-		for i in range(len(self.layers)-2, -1, -1):
+		for layer, activation in zip(
+				reversed(self.layers[:-1]),
+				reversed(self.activation_fns)):
 
-			dL = self.activation_fns[i].backward(dL)
-			dL = self.layers[i].backward(dL)
+			dL = activation.backward(dL)
+			dL = layer.backward(dL)
 
-			grad_W_list.append(self.layers[i].dw)
-			grad_b_list.append(self.layers[i].db)
+			grad_W_list.append(layer.dw)
+			grad_b_list.append(layer.db)
+
 		grad_W_list.reverse()
 		grad_b_list.reverse()
+
 		self.grad_W = np.empty(len(grad_W_list), dtype=object)
 		self.grad_b = np.empty(len(grad_b_list), dtype=object)
 
