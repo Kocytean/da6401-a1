@@ -1,19 +1,19 @@
 {
-    "dataset": "fashion_mnist",
-    "epochs": 5,
-    "batch_size": 64,
+    "dataset": "mnist",
+    "epochs": 50,
+    "batch_size": 32,
     "loss": "cross_entropy",
     "optimizer": "rmsprop",
-    "learning_rate": 0.0001,
-    "weight_decay": 0.0,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
     "num_layers": null,
     "hidden_size": [
-        "128,128,128,128"
+        "128,128,128"
     ],
-    "activation": "relu",
-    "weight_init": "xavier",
+    "activation": "tanh",
+    "weight_init": "zero",
     "wandb_project": "da6401",
-    "logging_options": "",
+    "logging_options": "9",
     "input_size": 784,
     "output_size": 10
 }
