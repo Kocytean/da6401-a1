@@ -1,5 +1,5 @@
 {
     "metric_name": "f1",
-    "best_score": 0.8628529862150277,
-    "dataset": "fashion_mnist"
+    "best_score": 0.9786101458520899,
+    "dataset": "mnist"
 }
