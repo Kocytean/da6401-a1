@@ -54,11 +54,11 @@ class NeuralNetwork:
 		else:
 			num_layers = len(hidden_sizes)
 		weight_init = initializer(cli_args.weight_init)
-		
+		self.activation = cli_args.activation
 		for h in hidden_sizes:
 			new_layer = Dense(input_size, h, weight_init)
 			self.layers.append(new_layer)
-			self.activation_fns.append(activation_fn(cli_args.activation))
+			self.activation_fns.append(activation_fn(self.activation))
 			input_size = h
 		self.layers.append(Dense(input_size, output_size, weight_init))
 		if weights is not None:
@@ -176,30 +176,18 @@ class NeuralNetwork:
 		return d
 
 	def set_weights(self, weight_dict):
-
-		# infer layer ids
-		layer_ids = sorted(
-				int(k[1:]) for k in weight_dict if k.startswith("W")
-		)
-
-		# infer architecture
+		layer_ids = sorted(int(k[1:]) for k in weight_dict if k.startswith("W"))
 		layer_sizes = []
 		for i in layer_ids:
 				W = weight_dict[f"W{i}"]
 				layer_sizes.append((W.shape[0], W.shape[1]))
 
-		# rebuild layers
-		self.layers = []
-		self.activation_fns = []
-
-		activation_name = getattr(self, "activation_name", "relu")
+		self.layers, self.activation_fns = [], []
+		activation = getattr(self, "activation", "relu")
 
 		for i, (inp, out) in enumerate(layer_sizes):
-
 				layer = Dense(inp, out)
 				self.layers.append(layer)
-
-				# add activation for all but output layer
 				if i < len(layer_sizes) - 1:
 						self.activation_fns.append(activation_fn(activation_name))
 

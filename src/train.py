@@ -81,6 +81,7 @@ def main():
 	model = NeuralNetwork(args)
 
 	best_model_score = load_previous_best('f1')
+	grad_log_neurons = None
 	for epoch in range(args.epochs):
 		log_dict = {"epoch": epoch}
 		train_loss = model.train(
@@ -99,11 +100,21 @@ def main():
 			metrics = model.evaluate(X_train, y_train, return_logits=False)
 			log_dict["train_accuracy"] = metrics["accuracy"]
 		if '9' in args.logging_options: # support for task 9, log grads
-			dw = model.grad_W[1]
-			for neuron_id in range(5):
-				grad_val = np.mean(dw[neuron_id])
-				log_dict["weight_init"] = args.weight_init
-				log_dict[f"grad_neuron_{neuron_id}"] = grad_val
+
+			dw = model.grad_W[-2]  
+			grad_mag = np.mean(np.abs(dw), axis=0)
+
+			if grad_log_neurons is None:
+				nonzero = np.where(grad_mag > 1e-8)[0]
+				if len(nonzero) >= 5:
+					grad_log_neurons = nonzero[:5]
+				else:
+					# fallback: take largest gradients
+					grad_log_neurons = np.argsort(-grad_mag)[:5]
+
+			for i in grad_log_neurons:
+				log_dict[f"grad_neuron_{i}"] = grad_mag[i]
+			log_dict["weight_init"] = args.weight_init
 
 
 		metrics = model.evaluate(X_val, y_val, return_logits=True)
