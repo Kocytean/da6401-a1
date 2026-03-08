@@ -1,5 +1,5 @@
 {
     "metric_name": "f1",
-    "best_score": 0.965829011264289,
+    "best_score": 0.9670302308418112,
     "dataset": "mnist"
 }
