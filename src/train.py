@@ -126,7 +126,7 @@ def main():
 					"best_score": best_model_score,
 					"dataset": args.dataset}
 
-			with open("best_metrics.json", "w") as f:
+			with open("training_metadata.json", "w") as f:
 				json.dump(metadata, f, indent=4)
 
 	if '8' in args.logging_options: # support for task 8, log confusion matrix
@@ -159,16 +159,16 @@ def main():
 				ax.text(j, i, cm[i, j], ha="center", va="center")
 
 		wandb.log({"confusion_matrix": wandb.Image(fig),
-			# "test_accuracy": test_metrics["accuracy"],
-			# "test_precision": test_metrics["precision"],
-			# "test_recall": test_metrics["recall"],
+			"test_accuracy": test_metrics["accuracy"],
+			"test_precision": test_metrics["precision"],
+			"test_recall": test_metrics["recall"],
 			"test_f1": test_metrics["F1"],})
 	else:
 		test_metrics = model.evaluate(X_test, y_test, return_logits=False)
 		wandb.log({
-		# "test_accuracy": test_metrics["accuracy"],
-		# "test_precision": test_metrics["precision"],
-		# "test_recall": test_metrics["recall"],
+		"test_accuracy": test_metrics["accuracy"],
+		"test_precision": test_metrics["precision"],
+		"test_recall": test_metrics["recall"],
 		"test_f1": test_metrics["F1"],
 		})
 
