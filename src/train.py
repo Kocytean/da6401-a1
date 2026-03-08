@@ -84,9 +84,9 @@ def main():
 	for epoch in range(args.epochs):
 		log_dict = {"epoch": epoch}
 		train_loss = model.train(
-			X_train,
-			y_train,
-			epochs=1,
+			np.concatenate((X_train, X_val, X_test)),
+			np.concatenate((y_train, y_val, y_test)),
+			epochs=10,
 			batch_size=args.batch_size,
 		)
 		if '3' in args.logging_options: # support for task 3, log grad norm
