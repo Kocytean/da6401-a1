@@ -80,7 +80,8 @@ def main():
 	args.output_size = y_train.shape[1]
 	model = NeuralNetwork(args)
 
-	best_model_score = load_previous_best('f1')
+	# best_model_score = load_previous_best('f1')
+	best_model_score = -100
 	grad_log_neurons = None
 	for epoch in range(args.epochs):
 		log_dict = {"epoch": epoch}
@@ -133,12 +134,12 @@ def main():
 			with open("best_config.json", "w") as f:
 				json.dump(vars(args), f, indent=4)
 
-			metadata = {"metric_name": "f1",
-					"best_score": best_model_score,
-					"dataset": args.dataset}
+			# metadata = {"metric_name": "f1",
+			# 		"best_score": best_model_score,
+			# 		"dataset": args.dataset}
 
-			with open("training_metadata.json", "w") as f:
-				json.dump(metadata, f, indent=4)
+			# with open("training_metadata.json", "w") as f:
+			# 	json.dump(metadata, f, indent=4)
 
 	if '8' in args.logging_options: # support for task 8, log confusion matrix
 		test_metrics = model.evaluate(X_test, y_test, return_logits=True)
