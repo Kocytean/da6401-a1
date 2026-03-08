@@ -17,15 +17,24 @@ class NeuralNetwork:
 
 	def __init__(self, cli_args):
 		
-		if getattr(cli_args, "model_path", None) is not None and os.path.exists("best_config.json"):
-			try:
-				with open("best_config.json", "r") as f:
-					config = json.load(f)
-				for field in ["hidden_size","activation"]:
-					if field in config:
-						setattr(cli_args, field, config[field])
-			except Exception:
-				pass
+		weights = None
+		if getattr(cli_args, "model_path", None) is not None and os.path.exists(cli_args.model_path):
+
+		    weights = np.load(cli_args.model_path, allow_pickle=True).item()
+
+		    # determine number of layers
+		    layer_indices = sorted(
+		        int(k[1:]) for k in weights.keys() if k.startswith("W")
+		    )
+
+		    hidden_sizes = []
+
+		    for i in layer_indices[:-1]:
+		        hidden_sizes.append(weights[f"W{i}"].shape[1])
+
+		    # override CLI architecture
+		    cli_args.hidden_size = hidden_sizes
+		    cli_args.num_layers = len(hidden_sizes)
 
 		self.activation_fns = []
 		self.layers = []
@@ -54,11 +63,11 @@ class NeuralNetwork:
 			self.activation_fns.append(activation_fn(activation_name))
 			input_size = h
 		self.layers.append(Dense(input_size, output_size, weight_init))
-		
+		if weights is not None:
+			self.set_weights(weights)
 		self.loss = objective_fn(cli_args.loss)
 		self.optimizer = optimizer(cli_args.optimizer, cli_args.learning_rate, cli_args.weight_decay)
-		if getattr(cli_args, "model_path", None) is not None:
-			self.set_weights(np.load(cli_args.model_path, allow_pickle=True).item())
+
 	def forward(self, X):
 
 		for i, layer in enumerate(self.layers[:-1]):

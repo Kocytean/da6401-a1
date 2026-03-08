@@ -90,6 +90,7 @@ def main():
 	model.set_weights(weights)
 	
 	eval_results = evaluate_model((model, args.loss), X_test, y_test)
+	print(eval_results)
 	print("Evaluation complete!")
 	return eval_results
 
