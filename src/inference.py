@@ -42,7 +42,7 @@ def load_model(model_path):
 	"""
 	Load trained model from disk.
 	"""
-	print('bruh')
+	raise RuntimeError(f"DEBUG {model_path}")
 	return np.load(model_path, allow_pickle=True).item()
 
 
@@ -82,7 +82,6 @@ def main():
 
 	args = fill_args_from_config(parse_arguments())
 	_, _, _, _, X_test, y_test = load_data(args.dataset)
-	raise RuntimeError(f"DEBUG y shape={y_test.shape}, dtype={y_test.dtype}")
 	args.input_size = X_test.shape[1]
 	args.output_size = y_test.shape[1]
 	model = NeuralNetwork(args)
