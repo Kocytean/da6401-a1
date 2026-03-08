@@ -189,7 +189,7 @@ class NeuralNetwork:
 				layer = Dense(inp, out)
 				self.layers.append(layer)
 				if i < len(layer_sizes) - 1:
-						self.activation_fns.append(activation_fn(activation_name))
+						self.activation_fns.append(activation_fn(activation))
 
 		# now load weights
 		for i, layer in enumerate(self.layers):
