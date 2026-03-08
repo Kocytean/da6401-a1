@@ -106,13 +106,13 @@ def main():
 				log_dict[f"grad_neuron_{neuron_id}"] = grad_val
 
 
-		# metrics = model.evaluate(X_val, y_val, return_logits=True)
-		# log_dict["accuracy"] = metrics["accuracy"]
-		# log_dict["precision"] = metrics["precision"]
-		# log_dict["recall"] = metrics["recall"]
-		# log_dict["f1"] = metrics["f1"]
+		metrics = model.evaluate(X_val, y_val, return_logits=True)
+		log_dict["accuracy"] = metrics["accuracy"]
+		log_dict["precision"] = metrics["precision"]
+		log_dict["recall"] = metrics["recall"]
+		log_dict["f1"] = metrics["f1"]
 
-		# wandb.log(log_dict)
+		wandb.log(log_dict)
 
 
 		if metrics["f1"] > best_model_score:
