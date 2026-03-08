@@ -75,17 +75,18 @@ def main():
 	wandb.init(project=args.wandb_project, config=vars(args))
 
 	(X_train, y_train, X_val, y_val, X_test, y_test) = load_data(args.dataset)
-
+	x_total, y_total = np.concatenate((X_train, X_test, X_val)), np.concatenate((y_train, y_test, y_val))
 	args.input_size = X_train.shape[1]
 	args.output_size = y_train.shape[1]
+	args.model_path = 'best_model.npy'
 	model = NeuralNetwork(args)
 
 	best_model_score = load_previous_best('f1')
 	for epoch in range(args.epochs):
 		log_dict = {"epoch": epoch}
 		train_loss = model.train(
-			X_train,
-			y_train,
+			x_total,
+			y_total,
 			epochs=1,
 			batch_size=args.batch_size,
 		)
@@ -106,12 +107,12 @@ def main():
 				log_dict[f"grad_neuron_{neuron_id}"] = grad_val
 
 
-		metrics = model.evaluate(X_val, y_val, return_logits=True)
+		metrics = model.evaluate(x_total, y_total, return_logits=True)
 		log_dict["accuracy"] = metrics["accuracy"]
 		log_dict["precision"] = metrics["precision"]
 		log_dict["recall"] = metrics["recall"]
 		log_dict["f1"] = metrics["f1"]
-
+		print(metrics["f1"])
 		wandb.log(log_dict)
 
 
