@@ -79,8 +79,10 @@ def main():
 
 	TODO: Must return Dictionary - logits, loss, accuracy, f1, precision, recall
 	"""
+
 	args = fill_args_from_config(parse_arguments())
 	_, _, _, _, X_test, y_test = load_data(args.dataset)
+	raise RuntimeError(f"DEBUG y shape={y_test.shape}, dtype={y_test.dtype}")
 	args.input_size = X_test.shape[1]
 	args.output_size = y_test.shape[1]
 	model = NeuralNetwork(args)

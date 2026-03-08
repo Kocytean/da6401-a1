@@ -156,7 +156,7 @@ class NeuralNetwork:
 			"accuracy": acc,
 			"precision": precision,
 			"recall": recall,
-			"F1": f1}
+			"f1": f1}
 
 		if loss_fn is not None:
 			if isinstance(loss_fn, list):
