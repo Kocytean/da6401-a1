@@ -20,22 +20,21 @@ class NeuralNetwork:
 		weights = None
 		if getattr(cli_args, "model_path", None) is not None and os.path.exists(cli_args.model_path):
 
-		    weights = np.load(cli_args.model_path, allow_pickle=True).item()
+			if getattr(cli_args, "hidden_size", None) is None and \
+				getattr(cli_args, "model_path", None) is not None:
 
-		    # determine number of layers
-		    layer_indices = sorted(
-		        int(k[1:]) for k in weights.keys() if k.startswith("W")
-		    )
+				weights = np.load(cli_args.model_path, allow_pickle=True).item()
 
-		    hidden_sizes = []
+				layer_ids = sorted(int(k[1:]) for k in weights if k.startswith("W"))
 
-		    for i in layer_indices[:-1]:
-		        hidden_sizes.append(weights[f"W{i}"].shape[1])
+				hidden_sizes = [
+					weights[f"W{i}"].shape[1]
+					for i in layer_ids[:-1]
+				]
 
-		    # override CLI architecture
-		    cli_args.hidden_size = hidden_sizes
-		    cli_args.num_layers = len(hidden_sizes)
-
+				cli_args.hidden_size = hidden_sizes
+				cli_args.num_layers = len(hidden_sizes)
+			
 		self.activation_fns = []
 		self.layers = []
 		if hasattr(cli_args, "input_size"):
@@ -55,12 +54,11 @@ class NeuralNetwork:
 		else:
 			num_layers = len(hidden_sizes)
 		weight_init = initializer(cli_args.weight_init)
-		activation_name = cli_args.activation
 		
 		for h in hidden_sizes:
 			new_layer = Dense(input_size, h, weight_init)
 			self.layers.append(new_layer)
-			self.activation_fns.append(activation_fn(activation_name))
+			self.activation_fns.append(activation_fn(cli_args.activation))
 			input_size = h
 		self.layers.append(Dense(input_size, output_size, weight_init))
 		if weights is not None:
