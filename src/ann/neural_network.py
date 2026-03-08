@@ -16,6 +16,7 @@ from ann.optimizers import *
 class NeuralNetwork:
 
 	def __init__(self, cli_args):
+		raise RuntimeError(f"DEBUG {cli_args}")
 		def parse_hidden_sizes(arg):
 			if arg is None or len(arg) == 0:
 				return []
@@ -139,7 +140,7 @@ class NeuralNetwork:
 		return running_loss
 
 	def evaluate(self, X, y, return_logits = True, loss_fn = None):
-		raise RuntimeError(f"DEBUG y shape={y.shape}, dtype={y.dtype}")
+		
 		logits = self.forward(X)
 
 		preds = np.argmax(logits, axis=1)
