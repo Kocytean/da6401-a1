@@ -1,6 +1,6 @@
 {
     "dataset": "mnist",
-    "epochs": 50,
+    "epochs": 100,
     "batch_size": 32,
     "loss": "cross_entropy",
     "optimizer": "rmsprop",
@@ -15,5 +15,6 @@
     "wandb_project": "da6401",
     "logging_options": "",
     "input_size": 784,
-    "output_size": 10
+    "output_size": 10,
+    "model_path": "best_model.npy"
 }
