@@ -42,7 +42,7 @@ def load_model(model_path):
 	"""
 	Load trained model from disk.
 	"""
-	print('bruh')
+
 	return np.load(model_path, allow_pickle=True).item()
 
 
@@ -52,7 +52,7 @@ def evaluate_model(model, X_test, y_test):
 		
 	TODO: Return Dictionary - logits, loss, accuracy, f1, precision, recall
 	"""
-	raise RuntimeError(f"DEBUG y shape={y_test.shape}, dtype={y_test.dtype}")
+	
 	model, loss = model
 	return model.evaluate(X_test, y_test, return_logits = True, loss_fn=loss)
 

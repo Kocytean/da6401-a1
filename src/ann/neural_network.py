@@ -139,6 +139,7 @@ class NeuralNetwork:
 		return running_loss
 
 	def evaluate(self, X, y, return_logits = True, loss_fn = None):
+		raise RuntimeError(f"DEBUG y shape={y.shape}, dtype={y.dtype}")
 		logits = self.forward(X)
 
 		preds = np.argmax(logits, axis=1)
