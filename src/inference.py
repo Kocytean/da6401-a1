@@ -42,7 +42,7 @@ def load_model(model_path):
 	"""
 	Load trained model from disk.
 	"""
-	np.load(model_path, allow_pickle=True).item()
+	return np.load(model_path, allow_pickle=True).item()
 
 
 def evaluate_model(model, X_test, y_test): 
@@ -52,17 +52,17 @@ def evaluate_model(model, X_test, y_test):
 	TODO: Return Dictionary - logits, loss, accuracy, f1, precision, recall
 	"""
 	model, loss = model
-	return model.evaluate(X_test, y_test, loss_fn=objective_fn(loss))
+	return model.evaluate(X_test, y_test, loss_fn=loss)
 
 
 def main():
 	"""
-	Main inference function.
+	Main inference function.	
 
 	TODO: Must return Dictionary - logits, loss, accuracy, f1, precision, recall
 	"""
 	args = parse_arguments()
-	X_test, y_test = load_data(args.dataset)
+	_, _, _, _, X_test, y_test = load_data(args.dataset)
 	args.input_size = X_test.shape[1]
 	args.output_size = y_test.shape[1]
 	model = NeuralNetwork(args)
