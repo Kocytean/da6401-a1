@@ -89,7 +89,6 @@ def main():
 	
 	eval_results = evaluate_model((model, args.loss), X_test, y_test)
 	print("Evaluation complete!")
-	print(eval_results)
 	return eval_results
 
 if __name__ == '__main__':
