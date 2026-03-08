@@ -110,14 +110,14 @@ def main():
 		log_dict["val_accuracy"] = metrics["accuracy"]
 		log_dict["val_precision"] = metrics["precision"]
 		log_dict["val_recall"] = metrics["recall"]
-		log_dict["val_f1"] = metrics["f1"]
+		log_dict["val_f1"] = metrics["F1"]
 
 		wandb.log(log_dict)
 
 
-		if metrics["f1"] > best_model_score:
+		if metrics["F1"] > best_model_score:
 
-			best_model_score = metrics["f1"]
+			best_model_score = metrics["F1"]
 			np.save("best_model.npy", model.get_weights())
 			with open("best_config.json", "w") as f:
 				json.dump(vars(args), f, indent=4)
@@ -129,7 +129,7 @@ def main():
 			with open("best_metrics.json", "w") as f:
 				json.dump(metadata, f, indent=4)
 
-	if '8' in args.logging_options:
+	if '8' in args.logging_options: # support for task 8, log confusion matrix
 		test_metrics = model.evaluate(X_test, y_test, return_logits=True)
 		logits = test_metrics["logits"]
 
@@ -162,14 +162,14 @@ def main():
 			# "test_accuracy": test_metrics["accuracy"],
 			# "test_precision": test_metrics["precision"],
 			# "test_recall": test_metrics["recall"],
-			"test_f1": test_metrics["f1"],})
+			"test_f1": test_metrics["F1"],})
 	else:
 		test_metrics = model.evaluate(X_test, y_test, return_logits=False)
 		wandb.log({
 		# "test_accuracy": test_metrics["accuracy"],
 		# "test_precision": test_metrics["precision"],
 		# "test_recall": test_metrics["recall"],
-		"test_f1": test_metrics["f1"],
+		"test_f1": test_metrics["F1"],
 		})
 
 	wandb.finish()

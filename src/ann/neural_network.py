@@ -120,10 +120,10 @@ class NeuralNetwork:
 		for epoch in range(epochs):
 
 			shuffled_indices = np.random.permutation(size)
-
+			running_loss = 0
 			for i in range(0, size, batch_size):
 
-				batch_idx = indices[i:i+batch_size]
+				batch_idx = shuffled_indices[i:i+batch_size]
 
 				X_batch = X_train[batch_idx]
 				y_batch = y_train[batch_idx]
@@ -135,7 +135,7 @@ class NeuralNetwork:
 				self.backward(y_batch, logits)
 				self.update_weights()
 
-			print(f"{epoch+1}/{epochs} - {running_loss}")
+			# print(f"{epoch+1}/{epochs} - {running_loss}")
 		return running_loss
 
 	def evaluate(self, X, y, return_logits = True, loss_fn = None):
@@ -147,7 +147,7 @@ class NeuralNetwork:
 			labels = y
 		else:
 			labels = np.argmax(y, axis=1)
-		acc = accuracy_	score(labels, preds)
+		acc = accuracy_score(labels, preds)
 		precision = precision_score(labels, preds)
 		recall = recall_score(labels, preds)
 		f1 = f1_score(labels, preds)
