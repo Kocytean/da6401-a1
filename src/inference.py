@@ -5,7 +5,6 @@ Evaluate trained models on test sets
 
 import argparse
 import numpy as np
-from keras.datasets import mnist, fashion_mnist
 from ann.neural_network import NeuralNetwork
 from ann.objective_functions import objective_fn
 from utils.data_loader import load_data, categorical
@@ -42,6 +41,7 @@ def load_model(model_path):
 	"""
 	Load trained model from disk.
 	"""
+	print('bruh')
 	return np.load(model_path, allow_pickle=True).item()
 
 
