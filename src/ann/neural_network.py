@@ -176,13 +176,37 @@ class NeuralNetwork:
 		return d
 
 	def set_weights(self, weight_dict):
+
+		# infer layer ids
+		layer_ids = sorted(
+				int(k[1:]) for k in weight_dict if k.startswith("W")
+		)
+
+		# infer architecture
+		layer_sizes = []
+		for i in layer_ids:
+				W = weight_dict[f"W{i}"]
+				layer_sizes.append((W.shape[0], W.shape[1]))
+
+		# rebuild layers
+		self.layers = []
+		self.activation_fns = []
+
+		activation_name = getattr(self, "activation_name", "relu")
+
+		for i, (inp, out) in enumerate(layer_sizes):
+
+				layer = Dense(inp, out)
+				self.layers.append(layer)
+
+				# add activation for all but output layer
+				if i < len(layer_sizes) - 1:
+						self.activation_fns.append(activation_fn(activation_name))
+
+		# now load weights
 		for i, layer in enumerate(self.layers):
-			w_key = f"W{i}"
-			b_key = f"b{i}"
-			if w_key in weight_dict:
-				layer.W = weight_dict[w_key].copy()
-			if b_key in weight_dict:
-				layer.b = weight_dict[b_key].copy()
+				layer.W = weight_dict[f"W{i}"].copy()
+				layer.b = weight_dict[f"b{i}"].copy()
 
 
 def parse_hidden_sizes(arg):

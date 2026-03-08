@@ -11,10 +11,11 @@ best_config= argparse.Namespace(
             optimizer="sgd",
             weight_decay=0.0,
             learning_rate=0.01,
-            num_layers=2,
-            hidden_size=[64, 64],
+            num_layers=3,
+            hidden_size=["128,128,128"],
             activation="relu",
-            weight_init="xavier"
+            weight_init="xavier",
+            model_path ="best_model.npy"
         )
 
 model = NeuralNetwork(best_config)
@@ -22,8 +23,9 @@ model = NeuralNetwork(best_config)
 weights = np.load("best_model.npy", allow_pickle=True).item()
 
 model.set_weights(weights)
+print(len(model.layers))
 
-X_test = np.random.rand(100, 784)  # 100 samples, 784 features
+X_test = np.ones((100, 784))  # 100 samples, 784 features
 
 y_true = np.random.randint(0, 10, size=(100,))  # 100 samples, 10 classes (0-9)
 
