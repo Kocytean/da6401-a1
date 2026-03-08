@@ -2,7 +2,8 @@
 Inference Script
 Evaluate trained models on test sets
 """
-
+import os
+import json	
 import argparse
 import numpy as np
 from ann.neural_network import NeuralNetwork
@@ -52,8 +53,25 @@ def evaluate_model(model, X_test, y_test):
 	TODO: Return Dictionary - logits, loss, accuracy, f1, precision, recall
 	"""
 	model, loss = model
-	return model.evaluate(X_test, y_test, loss_fn=loss)
+	return model.evaluate(X_test, y_test, return_logits = True, loss_fn=loss)
 
+def fill_args_from_config(args, config_path="best_config.json"):
+    """
+    Fill missing CLI args from best_config.json.
+    CLI arguments take precedence.
+    """
+
+    if not os.path.exists(config_path):
+        return args
+
+    with open(config_path, "r") as f:
+        config = json.load(f)
+
+    for key, value in config.items():
+        if getattr(args, key, None) in [None, []]:
+            setattr(args, key, value)
+
+    return args
 
 def main():
 	"""
@@ -61,7 +79,7 @@ def main():
 
 	TODO: Must return Dictionary - logits, loss, accuracy, f1, precision, recall
 	"""
-	args = parse_arguments()
+	args = fill_args_from_config(parse_arguments())
 	_, _, _, _, X_test, y_test = load_data(args.dataset)
 	args.input_size = X_test.shape[1]
 	args.output_size = y_test.shape[1]
@@ -71,7 +89,7 @@ def main():
 	
 	eval_results = evaluate_model((model, args.loss), X_test, y_test)
 	print("Evaluation complete!")
-
+	print(eval_results)
 	return eval_results
 
 if __name__ == '__main__':
