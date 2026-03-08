@@ -4,7 +4,7 @@ Handles forward and backward propagation loops
 """
 import sys
 from pathlib import Path
-
+import os
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 import numpy as np
@@ -16,27 +16,17 @@ from ann.optimizers import *
 class NeuralNetwork:
 
 	def __init__(self, cli_args):
-		raise RuntimeError(f"DEBUG {cli_args}")
-		def parse_hidden_sizes(arg):
-			if arg is None or len(arg) == 0:
-				return []
-			
-			sizes = []
-			for item in arg:
-				# split comma-separated values
-				parts = str(item).split(",")
-				for p in parts:
-					p = p.strip()
-					if p == "":
-						continue
-					if not p.isdigit():
-						raise ValueError(f"Invalid hidden size '{p}'. Must be positive integers.")
-					val = int(p)
-					if val <= 0:
-						raise ValueError("Hidden layer sizes must be positive.")
-					sizes.append(val)
-			return sizes
-			
+		
+		if getattr(cli_args, "model_path", None) is not None and os.path.exists("best_config.json"):
+			try:
+				with open("best_config.json", "r") as f:
+					config = json.load(f)
+				for field in ["hidden_size","activation"]:
+					if field in config:
+						setattr(cli_args, field, config[field])
+			except Exception:
+				pass
+
 		self.activation_fns = []
 		self.layers = []
 		if hasattr(cli_args, "input_size"):
@@ -67,7 +57,8 @@ class NeuralNetwork:
 		
 		self.loss = objective_fn(cli_args.loss)
 		self.optimizer = optimizer(cli_args.optimizer, cli_args.learning_rate, cli_args.weight_decay)
-	
+		if getattr(cli_args, "model_path", None) is not None:
+			self.set_weights(np.load(cli_args.model_path, allow_pickle=True).item())
 	def forward(self, X):
 
 		for i, layer in enumerate(self.layers[:-1]):
@@ -185,3 +176,24 @@ class NeuralNetwork:
 				layer.W = weight_dict[w_key].copy()
 			if b_key in weight_dict:
 				layer.b = weight_dict[b_key].copy()
+
+
+def parse_hidden_sizes(arg):
+	if arg is None or len(arg) == 0:
+		return []
+	
+	sizes = []
+	for item in arg:
+		# split comma-separated values
+		parts = str(item).split(",")
+		for p in parts:
+			p = p.strip()
+			if p == "":
+				continue
+			if not p.isdigit():
+				raise ValueError(f"Invalid hidden size '{p}'. Must be positive integers.")
+			val = int(p)
+			if val <= 0:
+				raise ValueError("Hidden layer sizes must be positive.")
+			sizes.append(val)
+	return sizes
