@@ -9,7 +9,7 @@ import wandb
 from ann.neural_network import NeuralNetwork
 from utils.data_loader import load_data, categorical
 from ann.objective_functions import accuracy_score, f1_score
-
+import os
 import json
 
 def parse_arguments():
@@ -48,12 +48,27 @@ def parse_arguments():
 	parser.add_argument("-lo", "--logging_options", type=str,default=None)
 	return parser.parse_args()
 
+def load_previous_best(metric_name="f1"):
+
+	if not os.path.exists("training_metadata.json"):
+		return -1
+
+	try:
+		with open("training_metadata.json", "r") as f:
+			metrics = json.load(f)
+
+		prev_metric = metrics.get("metric_name")
+		prev_score = metrics.get("best_score")
+
+		if prev_metric == metric_name and prev_score is not None:
+			return prev_score
+		else:
+			return -1
+	except Exception:
+		return -1
 
 def main():
-	"""
-	Main training function.
-	"""
-	
+
 	args = parse_arguments()
 	if args.logging_options is None:
 		args.logging_options = ""
@@ -65,7 +80,7 @@ def main():
 	args.output_size = y_train.shape[1]
 	model = NeuralNetwork(args)
 
-	best_model_score = -100
+	best_model_score = load_previous_best('f1')
 	for epoch in range(args.epochs):
 		log_dict = {"epoch": epoch}
 		train_loss = model.train(
@@ -92,23 +107,28 @@ def main():
 
 
 		metrics = model.evaluate(X_val, y_val)
-		# log_dict["val_accuracy"] = metrics["accuracy"]
-		# log_dict["val_precision"] = metrics["precision"]
-		# log_dict["val_recall"] = metrics["recall"]
+		log_dict["val_accuracy"] = metrics["accuracy"]
+		log_dict["val_precision"] = metrics["precision"]
+		log_dict["val_recall"] = metrics["recall"]
 		log_dict["val_f1"] = metrics["f1"]
 
 		wandb.log(log_dict)
 
-		# print(f"Eval: Acc={metrics['accuracy']:.4f} | f1={metrics['f1']:.4f}")
 
-		# save best model
 		if metrics["f1"] > best_model_score:
+
 			best_model_score = metrics["f1"]
-
 			np.save("best_model.npy", model.get_weights())
-
 			with open("best_config.json", "w") as f:
 				json.dump(vars(args), f, indent=4)
+
+			metadata = {"metric_name": "f1",
+					"best_score": best_model_score,
+					"dataset": args.dataset}
+
+			with open("best_metrics.json", "w") as f:
+				json.dump(metadata, f, indent=4)
+
 	if '8' in args.logging_options:
 		test_metrics = model.evaluate(X_test, y_test, return_logits=True)
 		logits = test_metrics["logits"]

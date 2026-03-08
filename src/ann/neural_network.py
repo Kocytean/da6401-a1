@@ -120,15 +120,13 @@ class NeuralNetwork:
 		for epoch in range(epochs):
 
 			shuffled_indices = np.random.permutation(size)
-			X_train = X_train[shuffled_indices]
-			y_train = y_train[shuffled_indices]
-
-			running_loss = 0
 
 			for i in range(0, size, batch_size):
 
-				X_batch = X_train[i:i+batch_size]
-				y_batch = y_train[i:i+batch_size]
+				batch_idx = indices[i:i+batch_size]
+
+				X_batch = X_train[batch_idx]
+				y_batch = y_train[batch_idx]
 
 				logits = self.forward(X_batch)
 				batch_loss = self.loss.forward(logits, y_batch)
@@ -144,17 +142,21 @@ class NeuralNetwork:
 		logits = self.forward(X)
 
 		preds = np.argmax(logits, axis=1)
-		labels = np.argmax(y, axis=1)
-		# acc = accuracy_	score(labels, preds)
-		# precision = precision_score(labels, preds)
-		# recall = recall_score(labels, preds)
+
+		if y.ndim == 1:
+			labels = y
+		else:
+			labels = np.argmax(y, axis=1)
+		acc = accuracy_	score(labels, preds)
+		precision = precision_score(labels, preds)
+		recall = recall_score(labels, preds)
 		f1 = f1_score(labels, preds)
 
 		metrics =  {
-			# "accuracy": acc,
-			# "precision": precision,
-			# "recall": recall,
-			"f1": f1}
+			"accuracy": acc,
+			"precision": precision,
+			"recall": recall,
+			"F1": f1}
 
 		if loss_fn is not None:
 			if isinstance(loss_fn, list):

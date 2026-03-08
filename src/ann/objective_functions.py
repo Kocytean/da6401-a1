@@ -69,8 +69,6 @@ class CrossEntropy(Objective):
 	def backward(self):
 		return (self.probs - self.labels)/ (self.batch_size)
 
-# METRIC FUNCTIONS for eval
-
 def class_stats(labels, pred, num_classes=None):
 
 	if num_classes is None:
